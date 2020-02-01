@@ -1,20 +1,18 @@
 
 <template>
-  <div class="search-container">
-    <div class="border-teal-500" >
-      <label class="block" for="search-country">
-          Pays
-      </label>
-      <input v-model="search" id="search-country" type="text">
-      <ul class="countries-list">
-        <li class="flex items-center mt-2" v-for="country in displayedCountries" :key="country.numericCode" >
-          <div class="country-img mr-2">
-            <img width="100%" :src="country.flag" />
-          </div>
-          <span>{{country.name}}</span>
-        </li>
-      </ul>
-    </div>
+  <div class="search-container mt-6">
+    <label class="block search-label" for="search-country">
+        Pays
+    </label>
+    <input v-model="search" class="border-none search-input" id="search-country" type="text">
+    <ul class="countries-list">
+      <li class="flex items-center mt-2" v-for="country in displayedCountries" :key="country.numericCode" >
+        <div class="country-img mr-2">
+          <img width="100%" :src="country.flag" />
+        </div>
+        <span>{{country.name}}</span>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -25,8 +23,7 @@ export default {
     data() {
         return {
             initialCountries: [],
-            displayedCountries : [],
-            search : null,
+            search: "",
         }
     },
     mounted () {
@@ -34,14 +31,15 @@ export default {
         .get('https://restcountries.eu/rest/v2/all')
         .then(response => {
           this.initialCountries = response.data;
-          this.displayedCountries = response.data;
         });
   },
-  // computed: {
-  //   displayedCountries : function(){
-  //      return this.initialCountries.filter(country => country.name ==="France")
-  //   }
-  // }
+  computed: {
+    displayedCountries : function() {
+       return this.search === "" 
+        ? this.initialCountries 
+        : this.initialCountries.filter(country => country.name.toLowerCase().indexOf(this.search.toLowerCase()) === 0)
+    }
+  }
 }
 </script>
 
@@ -49,16 +47,22 @@ export default {
   .search-container {
     width : 300px;
     padding: 25px;
-    margin: 0 auto;
-    background-color : #f2f5f7;
-    label {
+    background: white;
+    margin : 0 auto;
+
+    .search-label {
       font-size: 12px;
       color: #94bbdc;
     }
 
+    .search-input {
+      border-bottom : 1px solid #94bbdc;
+      font-size : 16px;
+    }
+
     .countries-list {
       max-height: 130px;
-      overflow: scroll;
+      overflow-y: scroll;
       margin: 0 auto;
     }
     
