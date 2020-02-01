@@ -1,17 +1,17 @@
 
 <template>
   <div class="search-container">
-      <label for="search-country">
+    <div class="border-teal-500" >
+      <label class="block" for="search-country">
           Pays
       </label>
-    <div>
       <input v-model="search" id="search-country" type="text">
       <ul class="countries-list">
-        <li v-for="country in displayedCountries" :key="country.numericCode" >
-          <div class="country-img">
+        <li class="flex items-center mt-2" v-for="country in displayedCountries" :key="country.numericCode" >
+          <div class="country-img mr-2">
             <img width="100%" :src="country.flag" />
           </div>
-          {{country.name}}
+          <span>{{country.name}}</span>
         </li>
       </ul>
     </div>
@@ -47,21 +47,23 @@ export default {
 
 <style scoped lang="scss">
   .search-container {
-
+    width : 300px;
+    padding: 25px;
+    margin: 0 auto;
+    background-color : #f2f5f7;
     label {
       font-size: 12px;
       color: #94bbdc;
     }
 
     .countries-list {
-      width: 300px;
       max-height: 130px;
       overflow: scroll;
       margin: 0 auto;
     }
     
     .country-img {
-      width: 48px;
+      width: 24px;
     }
   }
 
