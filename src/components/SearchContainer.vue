@@ -4,13 +4,13 @@
     <label class="block search-label" for="search-country">
         Pays
     </label>
-    <input v-model="search" class="border-none search-input" id="search-country" type="text">
-    <ul class="countries-list">
-      <li class="flex items-center mt-2" v-for="country in displayedCountries" :key="country.numericCode" >
+    <input v-model="search" autocomplete="off" @click="clickOnField" class="border-none search-input" id="search-country" type="text">
+    <ul v-if="countriesListOpen" class="countries-list shadow-lg">
+      <li @click="clickOnCountry(country)" class="flex items-center mt-2" v-for="country in displayedCountries" :key="country.numericCode" >
         <div class="country-img mr-2">
           <img width="100%" :src="country.flag" />
         </div>
-        <span>{{country.name}}</span>
+        <span>{{country.name | bodify}}</span>
       </li>
     </ul>
   </div>
@@ -24,6 +24,8 @@ export default {
         return {
             initialCountries: [],
             search: "",
+            selectedCountry: null,
+            countriesListOpen : false,
         }
     },
     mounted () {
@@ -32,19 +34,37 @@ export default {
         .then(response => {
           this.initialCountries = response.data;
         });
-  },
-  computed: {
-    displayedCountries : function() {
-       return this.search === "" 
-        ? this.initialCountries 
-        : this.initialCountries.filter(country => country.name.toLowerCase().indexOf(this.search.toLowerCase()) === 0)
-    }
-  }
+    },
+    computed: {
+      displayedCountries : function() {
+        return this.search === "" 
+          ? this.initialCountries 
+          : this.initialCountries.filter(this.filterCountries)
+      }
+    },
+    filters : {
+      bodify: function(val) {
+        return val
+      }
+    },
+    methods: {
+      filterCountries(country) {
+        return country.name.toLowerCase().indexOf(this.search.toLowerCase()) === 0
+      },
+      clickOnCountry: function(country){
+        this.search = country.name;
+        this.countriesListOpen = false;
+      },
+      clickOnField: function (){
+        this.countriesListOpen = true;
+      }
+    },
 }
 </script>
 
 <style scoped lang="scss">
   .search-container {
+    position: relative;
     width : 300px;
     padding: 25px;
     background: white;
@@ -61,13 +81,16 @@ export default {
     }
 
     .countries-list {
+      position: absolute;
+      background: white;
+      padding: 15px;
       max-height: 130px;
       overflow-y: scroll;
       margin: 0 auto;
     }
     
     .country-img {
-      width: 24px;
+      width: 18px;
     }
   }
 
