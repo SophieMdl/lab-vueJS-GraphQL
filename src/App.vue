@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import SearchContainer from './components/SearchContainer.vue'
+import SearchContainer from "./components/SearchContainer.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     SearchContainer
   }
-}
+};
 </script>
