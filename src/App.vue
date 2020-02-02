@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <SearchContainer />
+    <SearchContainer v-model="countryCode" />
   </div>
 </template>
 
@@ -8,6 +8,9 @@
 import SearchContainer from "./components/SearchContainer.vue";
 
 export default {
+  data() {
+    return { countryCode: "" };
+  },
   name: "app",
   components: {
     SearchContainer

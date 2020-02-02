@@ -38,7 +38,6 @@ export default {
     return {
       initialCountries: [],
       search: "",
-      selectedCountryCode: null,
       countriesListOpen: false
     };
   },
@@ -64,9 +63,12 @@ export default {
         country.name.toLowerCase().indexOf(this.search.toLowerCase()) === 0
       );
     },
+    setComponentModel: function(alpha2Code) {
+      this.$emit("input", alpha2Code);
+    },
     clickOnCountry: function(country) {
       this.search = country.name;
-      this.selectedCountryCode = country.alpha2Code;
+      this.setComponentModel(country.alpha2Code);
       this.countriesListOpen = false;
     },
     clickOnField: function() {
@@ -74,8 +76,14 @@ export default {
     },
     clickOutside: function(displayedCountries) {
       this.countriesListOpen = false;
-      if (!displayedCountries.some(country => country.name === this.search))
+      const countryFound = displayedCountries.find(
+        country => country.name === this.search
+      );
+      if (countryFound) {
+        this.setComponentModel(country.alpha2Code);
+      } else {
         this.search = "";
+      }
     }
   }
 };
