@@ -1,28 +1,30 @@
 
 <template>
-  <div class="search-container mt-6">
-    <label class="block search-label" for="search-country">Pays</label>
-    <input
-      v-model="search"
-      autocomplete="off"
-      @click="clickOnField"
-      class="border-none search-input"
-      id="search-country"
-      type="text"
-    />
-    <ul v-if="countriesListOpen" class="countries-list shadow-lg">
-      <li
-        @click="clickOnCountry(country)"
-        class="flex items-center mt-2"
-        v-for="country in displayedCountries"
-        :key="country.numericCode"
-      >
-        <div class="country-img mr-2">
-          <img width="100%" :src="country.flag" />
-        </div>
-        <span>{{country.name | bodify}}</span>
-      </li>
-    </ul>
+  <div class="page" @click.self="clickOutside(displayedCountries)">
+    <div class="search-container mt-6">
+      <label class="block search-label" for="search-country">Pays</label>
+      <input
+        v-model="search"
+        autocomplete="off"
+        @click.prevent="clickOnField"
+        class="border-none search-input"
+        id="search-country"
+        type="text"
+      />
+      <ul v-if="countriesListOpen" class="countries-list shadow-lg">
+        <li
+          @click="clickOnCountry(country)"
+          class="flex items-center mt-2 countries-list-item cursor-pointer"
+          v-for="country in displayedCountries"
+          :key="country.numericCode"
+        >
+          <div class="country-img mr-2">
+            <img class="w-full" :src="country.flag" />
+          </div>
+          <span>{{country.name | bodify}}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -34,7 +36,7 @@ export default {
     return {
       initialCountries: [],
       search: "",
-      selectedCountry: null,
+      selectedCountryCode: null,
       countriesListOpen: false
     };
   },
@@ -45,9 +47,13 @@ export default {
   },
   computed: {
     displayedCountries: function() {
-      return this.search === ""
-        ? this.initialCountries
-        : this.initialCountries.filter(this.filterCountries);
+      const searchedCountries =
+        this.search === ""
+          ? this.initialCountries
+          : this.initialCountries.filter(this.filterCountries);
+
+      this.countriesListOpen = searchedCountries.length !== 0;
+      return searchedCountries;
     }
   },
   filters: {
@@ -63,16 +69,26 @@ export default {
     },
     clickOnCountry: function(country) {
       this.search = country.name;
+      this.selectedCountryCode = country.alpha2Code;
       this.countriesListOpen = false;
     },
     clickOnField: function() {
       this.countriesListOpen = true;
+    },
+    clickOutside: function(displayedCountries) {
+      this.countriesListOpen = false;
+      if (!displayedCountries.find(country => country.name === this.search))
+        this.search = "";
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
+.page {
+  width: 100%;
+  height: 100%;
+}
 .search-container {
   position: relative;
   width: 300px;
@@ -97,6 +113,12 @@ export default {
     max-height: 130px;
     overflow-y: scroll;
     margin: 0 auto;
+
+    &-item:hover {
+      cursor: pointer;
+      background-color: #94bbdc;
+      color: white;
+    }
   }
 
   .country-img {
