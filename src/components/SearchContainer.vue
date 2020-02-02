@@ -19,7 +19,7 @@
           :key="country.numericCode"
         >
           <div class="country-img mr-2">
-            <img class="w-full" :src="country.flag" />
+            <img :alt="`${country.name}-flag`" class="w-full" :src="country.flag" />
           </div>
           <div v-for="(char, index) in country.name" :key="index">
             <span :class="{'font-bold' : index < search.length}">{{char}}</span>
