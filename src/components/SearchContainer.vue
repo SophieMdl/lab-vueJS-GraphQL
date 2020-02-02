@@ -6,7 +6,7 @@
       <input
         v-model="search"
         autocomplete="off"
-        @click.prevent="clickOnField"
+        @click="clickOnField"
         class="border-none search-input"
         id="search-country"
         type="text"
@@ -21,7 +21,9 @@
           <div class="country-img mr-2">
             <img class="w-full" :src="country.flag" />
           </div>
-          <span>{{country.name | bodify}}</span>
+          <div v-for="(char, index) in country.name" :key="index">
+            <span :class="{'font-bold' : index < search.length}">{{char}}</span>
+          </div>
         </li>
       </ul>
     </div>
@@ -56,11 +58,6 @@ export default {
       return searchedCountries;
     }
   },
-  filters: {
-    bodify: function(val) {
-      return val;
-    }
-  },
   methods: {
     filterCountries(country) {
       return (
@@ -77,7 +74,7 @@ export default {
     },
     clickOutside: function(displayedCountries) {
       this.countriesListOpen = false;
-      if (!displayedCountries.find(country => country.name === this.search))
+      if (!displayedCountries.some(country => country.name === this.search))
         this.search = "";
     }
   }
@@ -114,15 +111,16 @@ export default {
     overflow-y: scroll;
     margin: 0 auto;
 
-    &-item:hover {
-      cursor: pointer;
-      background-color: #94bbdc;
-      color: white;
+    &-item {
+      &:hover {
+        cursor: pointer;
+        background-color: #94bbdc;
+        color: white;
+      }
     }
-  }
-
-  .country-img {
-    width: 18px;
+    .country-img {
+      width: 18px;
+    }
   }
 }
 </style>
