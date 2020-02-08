@@ -1,31 +1,56 @@
-
 <template>
   <div class="page" @click.self="clickOutside(displayedCountries)">
     <div class="search-container mt-6">
       <label class="block search-label" for="search-country">Pays</label>
-      <input
-        v-model="search"
-        autocomplete="off"
-        @click="clickOnField"
-        class="border-none search-input"
+      <!------- FOR MOBILE ONLY ------>
+      <select
+        class="max-w-full bg-white border border-gray-400 shadow"
+        v-if="isSmallWith"
+        name="search-country"
         id="search-country"
-        type="text"
-      />
-      <ul v-if="countriesListOpen && displayedCountries.length > 0" class="countries-list shadow-lg">
-        <li
+      >
+        <option
           @click="clickOnCountry(country)"
-          class="flex items-center mt-2 countries-list-item cursor-pointer"
-          v-for="country in displayedCountries"
+          v-for="country in initialCountries"
           :key="country.numericCode"
+          >{{ country.name }}</option
         >
-          <div class="country-img mr-2">
-            <img :alt="`${country.name}-flag`" class="w-full" :src="country.flag" />
-          </div>
-          <div v-for="(char, index) in country.name" :key="index">
-            <span :class="{'font-bold' : index < search.length}">{{char}}</span>
-          </div>
-        </li>
-      </ul>
+      </select>
+      <!------- FOR LARGE SCREEN ONLY ------>
+      <div v-if="!isSmallWith">
+        <input
+          v-model="search"
+          autocomplete="off"
+          @click="clickOnField"
+          class="border-none search-input"
+          id="search-country"
+          type="text"
+        />
+        <ul
+          v-if="countriesListOpen && displayedCountries.length > 0"
+          class="countries-list shadow-lg"
+        >
+          <li
+            @click="clickOnCountry(country)"
+            class="flex items-center mt-2 countries-list-item cursor-pointer"
+            v-for="country in displayedCountries"
+            :key="country.numericCode"
+          >
+            <div class="country-img mr-2">
+              <img
+                :alt="`${country.name}-flag`"
+                class="w-full"
+                :src="country.flag"
+              />
+            </div>
+            <div v-for="(char, index) in country.name" :key="index">
+              <span :class="{ 'font-bold': index < search.length }">{{
+                char
+              }}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +63,8 @@ export default {
     return {
       initialCountries: [],
       search: "",
-      countriesListOpen: false
+      countriesListOpen: false,
+      isSmallWith: screen.width < 780
     };
   },
   mounted() {
