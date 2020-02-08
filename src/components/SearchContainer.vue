@@ -7,12 +7,14 @@
         class="max-w-full bg-white border border-gray-400 shadow"
         v-if="isSmallWith"
         name="search-country"
+        v-model="selectedCountryCode"
         id="search-country"
       >
         <option
           @click="clickOnCountry(country)"
           v-for="country in initialCountries"
           :key="country.numericCode"
+          :value="country.alpha2Code"
           >{{ country.name }}</option
         >
       </select>
@@ -64,8 +66,14 @@ export default {
       initialCountries: [],
       search: "",
       countriesListOpen: false,
-      isSmallWith: screen.width < 780
+      isSmallWith: screen.width < 780,
+      selectedCountryCode: null
     };
+  },
+  watch: {
+    selectedCountryCode: function() {
+      this.$emit("input", this.selectedCountryCode);
+    }
   },
   mounted() {
     axios.get("https://restcountries.eu/rest/v2/all").then(response => {
@@ -87,12 +95,9 @@ export default {
         country.name.toLowerCase().indexOf(this.search.toLowerCase()) === 0
       );
     },
-    setComponentModel: function(alpha2Code) {
-      this.$emit("input", alpha2Code);
-    },
     clickOnCountry: function(country) {
       this.search = country.name;
-      this.setComponentModel(country.alpha2Code);
+      this.selectedCountryCode = country.alpha2Code;
       this.countriesListOpen = false;
     },
     clickOnField: function() {
@@ -104,7 +109,7 @@ export default {
         country => country.name === this.search
       );
       if (countryFound) {
-        this.setComponentModel(countryFound.alpha2Code);
+        this.selectedCountryCode = countryFound.alpha2Code;
       } else {
         this.search = "";
       }
