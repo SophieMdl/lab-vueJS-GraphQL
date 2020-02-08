@@ -19,11 +19,11 @@
         >
       </select>
       <!------- FOR LARGE SCREEN ONLY ------>
-      <div v-if="!isSmallWith">
+      <div v-else>
         <input
           v-model="search"
           autocomplete="off"
-          @click="clickOnField"
+          @click="countriesListOpen = true"
           class="border-none search-input"
           id="search-country"
           type="text"
@@ -99,9 +99,6 @@ export default {
       this.search = country.name;
       this.selectedCountryCode = country.alpha2Code;
       this.countriesListOpen = false;
-    },
-    clickOnField: function() {
-      this.countriesListOpen = true;
     },
     clickOutside: function(displayedCountries) {
       this.countriesListOpen = false;
