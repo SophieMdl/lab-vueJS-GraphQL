@@ -11,7 +11,7 @@
         id="search-country"
         type="text"
       />
-      <ul v-if="countriesListOpen" class="countries-list shadow-lg">
+      <ul v-if="countriesListOpen && displayedCountries.length > 0" class="countries-list shadow-lg">
         <li
           @click="clickOnCountry(country)"
           class="flex items-center mt-2 countries-list-item cursor-pointer"
@@ -52,8 +52,6 @@ export default {
         this.search === ""
           ? this.initialCountries
           : this.initialCountries.filter(this.filterCountries);
-
-      this.countriesListOpen = searchedCountries.length !== 0;
       return searchedCountries;
     }
   },
@@ -80,7 +78,7 @@ export default {
         country => country.name === this.search
       );
       if (countryFound) {
-        this.setComponentModel(country.alpha2Code);
+        this.setComponentModel(countryFound.alpha2Code);
       } else {
         this.search = "";
       }
