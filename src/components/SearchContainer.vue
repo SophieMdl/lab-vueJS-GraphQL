@@ -59,7 +59,8 @@ export default {
       countriesListOpen: false,
       isSmallWith: screen.width < 780,
       selectedCountryCode: null,
-      displayedCountries: []
+      displayedCountries: [],
+      isLoading: true
     };
   },
   watch: {
@@ -67,9 +68,8 @@ export default {
       this.$emit("input", this.selectedCountryCode);
     },
     search: function() {
-      if (this.search === "") {
-        this.initialCountries = this.initialCountries;
-      }
+      if (this.search === "") this.displayedCountries = this.initialCountries;
+      this.isLoading = true;
       this.getSearchedCountries();
     }
   },
@@ -83,9 +83,14 @@ export default {
       axios
         .get(`https://restcountries.eu/rest/v2/name/${this.search}`)
         .then(response => {
+          this.isLoading = false;
+          this.countriesListOpen = true;
           this.displayedCountries = response.data;
         })
-        .catch(() => (this.displayedCountries = []));
+        .catch(() => {
+          this.countriesListOpen = false;
+          this.isLoading = false;
+        });
     },
     clickOnCountry: function(country) {
       this.search = country.name;
