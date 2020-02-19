@@ -1,5 +1,5 @@
 <template>
-  <div class="page" @click.self="clickOutside(displayedCountries)">
+  <div class="page" @click.self="clickOutside()">
     <div class="search-container mt-6">
       <label class="block search-label" for="search-country">Pays</label>
       <!------- FOR MOBILE ONLY ------>
@@ -15,8 +15,7 @@
           v-for="country in initialCountries"
           :key="country.numericCode"
           :value="country.alpha2Code"
-          >{{ country.name }}</option
-        >
+        >{{ country.name }}</option>
       </select>
       <!------- FOR LARGE SCREEN ONLY ------>
       <div v-else>
@@ -39,16 +38,14 @@
             :key="country.numericCode"
           >
             <div class="country-img mr-2">
-              <img
-                :alt="`${country.name}-flag`"
-                class="w-full"
-                :src="country.flag"
-              />
+              <img :alt="`${country.name}-flag`" class="w-full" :src="country.flag" />
             </div>
             <div v-for="(char, index) in country.name" :key="index">
-              <span :class="{ 'font-bold': index < search.length }">{{
+              <span :class="{ 'font-bold': index < search.length }">
+                {{
                 char
-              }}</span>
+                }}
+              </span>
             </div>
           </li>
         </ul>
@@ -67,12 +64,19 @@ export default {
       search: "",
       countriesListOpen: false,
       isSmallWith: screen.width < 780,
-      selectedCountryCode: null
+      selectedCountryCode: null,
+      displayedCountries: []
     };
   },
   watch: {
     selectedCountryCode: function() {
       this.$emit("input", this.selectedCountryCode);
+    },
+    search: function() {
+      if (this.search === "") {
+        this.initialCountries = this.initialCountries;
+      }
+      this.getSearchedCountries();
     }
   },
   mounted() {
@@ -80,29 +84,22 @@ export default {
       this.initialCountries = response.data;
     });
   },
-  computed: {
-    displayedCountries: function() {
-      const searchedCountries =
-        this.search === ""
-          ? this.initialCountries
-          : this.initialCountries.filter(this.filterCountries);
-      return searchedCountries;
-    }
-  },
   methods: {
-    filterCountries(country) {
-      return (
-        country.name.toLowerCase().indexOf(this.search.toLowerCase()) === 0
-      );
+    getSearchedCountries: function() {
+      axios
+        .get(`https://restcountries.eu/rest/v2/name/${this.search}`)
+        .then(response => {
+          this.displayedCountries = response.data;
+        });
     },
     clickOnCountry: function(country) {
       this.search = country.name;
       this.selectedCountryCode = country.alpha2Code;
       this.countriesListOpen = false;
     },
-    clickOutside: function(displayedCountries) {
+    clickOutside: function() {
       this.countriesListOpen = false;
-      const countryFound = displayedCountries.find(
+      const countryFound = this.displayedCountries.find(
         country => country.name === this.search
       );
       if (countryFound) {
