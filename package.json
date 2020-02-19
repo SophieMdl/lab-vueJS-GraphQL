@@ -40,5 +40,9 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "main": "index.js",
+  "repository": "git@github.com:SophieMdl/test-vueJS.git",
+  "author": "sophieMdl <sophie.michaudel@gmail.com>",
+  "license": "MIT"
 }
