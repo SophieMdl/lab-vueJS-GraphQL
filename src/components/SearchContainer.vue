@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import { getAllCountries, searchCountry } from "../services/api.js";
 
 export default {
   data() {
@@ -74,14 +74,13 @@ export default {
     }
   },
   mounted() {
-    axios.get("https://restcountries.eu/rest/v2/all").then(response => {
+    getAllCountries().then(response => {
       this.initialCountries = response.data;
     });
   },
   methods: {
     getSearchedCountries: function() {
-      axios
-        .get(`https://restcountries.eu/rest/v2/name/${this.search}`)
+      searchCountry(this.search)
         .then(response => {
           this.isLoading = false;
           this.countriesListOpen = true;
