@@ -6,6 +6,8 @@
 
 <script>
 import SearchContainer from "./components/SearchContainer.vue";
+import Vue from "vue";
+import gql from "graphql-tag";
 
 export default {
   data() {
@@ -14,6 +16,18 @@ export default {
   name: "app",
   components: {
     SearchContainer
+  },
+  apollo: {
+    allCountries: gql`
+      query allCountries {
+        countries {
+          name
+          flag
+          alpha2Code
+          numericCode
+        }
+      }
+    `
   }
 };
 </script>

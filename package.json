@@ -10,9 +10,11 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.4.4",
+    "graphql": "^14.6.0",
     "normalize.css": "^8.0.1",
     "tailwindcss": "^1.1.4",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vue-apollo": "^3.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.1.0",
