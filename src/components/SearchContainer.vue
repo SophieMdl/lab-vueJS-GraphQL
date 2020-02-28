@@ -2,23 +2,7 @@
   <div class="page" @click.self="clickOutside()">
     <div class="search-container mt-6">
       <label class="block search-label" for="search-country">Pays</label>
-      <!------- FOR MOBILE ONLY ------>
-      <select
-        class="max-w-full bg-white border border-gray-400 shadow"
-        v-if="isSmallWith"
-        name="search-country"
-        v-model="selectedCountryCode"
-        id="search-country"
-      >
-        <option
-          @click="clickOnCountry(country)"
-          v-for="country in initialCountries"
-          :key="country.numericCode"
-          :value="country.alpha2Code"
-        >{{ country.name }}</option>
-      </select>
-      <!------- FOR LARGE SCREEN ONLY ------>
-      <div v-else>
+      <div>
         <input
           v-model="search"
           autocomplete="off"
@@ -27,14 +11,11 @@
           id="search-country"
           type="text"
         />
-        <ul
-          v-if="countriesListOpen && displayedCountries.length > 0"
-          class="countries-list shadow-lg"
-        >
+        <ul v-if="countriesListOpen && countries.length > 0" class="countries-list shadow-lg">
           <li
             @click="clickOnCountry(country)"
             class="flex items-center mt-2 countries-list-item cursor-pointer"
-            v-for="country in displayedCountries"
+            v-for="country in countries"
             :key="country.numericCode"
           >
             <div class="country-img mr-2">
@@ -49,46 +30,51 @@
 </template>
 
 <script>
-import { getAllCountries, searchCountry } from "../services/api.js";
+import { searchCountry } from "../services/api.js";
+import gql from "graphql-tag";
+
+const getCountries = () => gql`
+  query allCountries {
+    countries {
+      name
+      flag
+      alpha2Code
+      numericCode
+    }
+  }
+`;
 
 export default {
   data() {
     return {
-      initialCountries: [],
       search: "",
       countriesListOpen: false,
-      isSmallWith: screen.width < 780,
       selectedCountryCode: null,
-      displayedCountries: [],
-      isLoading: true
+      countries: []
     };
+  },
+  apollo: {
+    countries: getCountries()
   },
   watch: {
     selectedCountryCode: function() {
       this.$emit("input", this.selectedCountryCode);
     },
     search: function() {
-      if (this.search === "") this.displayedCountries = this.initialCountries;
-      this.isLoading = true;
+      if (this.search === "") return;
       this.getSearchedCountries();
     }
   },
-  mounted() {
-    getAllCountries().then(response => {
-      this.initialCountries = response.data;
-    });
-  },
+
   methods: {
     getSearchedCountries: function() {
       searchCountry(this.search)
         .then(response => {
-          this.isLoading = false;
           this.countriesListOpen = true;
-          this.displayedCountries = response.data;
+          this.countries = response.data;
         })
         .catch(() => {
           this.countriesListOpen = false;
-          this.isLoading = false;
         });
     },
     clickOnCountry: function(country) {
@@ -98,7 +84,7 @@ export default {
     },
     clickOutside: function() {
       this.countriesListOpen = false;
-      const countryFound = this.displayedCountries.find(
+      const countryFound = this.countries.find(
         country => country.name === this.search
       );
       if (countryFound) {

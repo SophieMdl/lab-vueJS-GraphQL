@@ -1,8 +1,8 @@
-query allCountries(){
- countries(){
-    name,
-    flag, 
-    alpha2Code,
+query allCountries() {
+  countries() {
+    name
+    flag
+    alpha2Code
     numericCode
   }
 }
