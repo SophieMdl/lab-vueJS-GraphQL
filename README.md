@@ -2,7 +2,7 @@
 
 ## Specifications
 
-Projet en VueJS, tailwindCSS
+Projet en VueJS, Express, GraphQL, tailwindCSS
 
 ## Project setup
 
